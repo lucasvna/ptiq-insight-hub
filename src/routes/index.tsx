@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowDownRight, ArrowUpRight, Lightbulb, AlertTriangle, Info, CheckCircle2 } from "lucide-react";
+import { useState, useMemo } from "react";
+import { ArrowDownRight, ArrowUpRight, Lightbulb, AlertTriangle, Info, CheckCircle2, Calendar } from "lucide-react";
 import { kpis, insights, alertas, receitaPorMes, servicosMargem, formatBRL } from "@/lib/petiq-data";
 
 export const Route = createFileRoute("/")({
