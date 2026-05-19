@@ -76,11 +76,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "PetIQ — Inteligência para Clínicas Veterinárias" },
       { name: "description", content: "Sistema de Informação Executiva (SIE) para clínicas veterinárias. Monitore estoque, clientes, serviços e receita com insights claros." },
       { name: "author", content: "PetIQ" },
-      { property: "og:title", content: "PetIQ — SIE para Clínicas Veterinárias" },
-      { property: "og:description", content: "Dashboard executivo com KPIs e alertas em linguagem simples." },
+      { property: "og:title", content: "PetIQ — Inteligência para Clínicas Veterinárias" },
+      { property: "og:description", content: "Sistema de Informação Executiva (SIE) para clínicas veterinárias. Monitore estoque, clientes, serviços e receita com insights claros." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "PetIQ — Inteligência para Clínicas Veterinárias" },
+      { name: "twitter:description", content: "Sistema de Informação Executiva (SIE) para clínicas veterinárias. Monitore estoque, clientes, serviços e receita com insights claros." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/41f61d6a-9426-42c7-83fb-52b8166dbfd8/id-preview-7dabf211--8dba4b5c-4428-466b-bfff-259a934c494a.lovable.app-1779216076686.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/41f61d6a-9426-42c7-83fb-52b8166dbfd8/id-preview-7dabf211--8dba4b5c-4428-466b-bfff-259a934c494a.lovable.app-1779216076686.png" },
     ],
     links: [
       {
