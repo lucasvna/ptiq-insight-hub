@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowDownRight, ArrowUpRight, Lightbulb, AlertTriangle, Info, CheckCircle2 } from "lucide-react";
+import { useState, useMemo } from "react";
+import { ArrowDownRight, ArrowUpRight, Lightbulb, AlertTriangle, Info, CheckCircle2, Calendar } from "lucide-react";
 import { kpis, insights, alertas, receitaPorMes, servicosMargem, formatBRL } from "@/lib/petiq-data";
 
 export const Route = createFileRoute("/")({
@@ -48,22 +49,57 @@ function InsightCard({ pergunta, resposta, detalhe, tipo }: { pergunta: string; 
 }
 
 function Index() {
-  const maxReceita = Math.max(...receitaPorMes.map((m) => m.valor));
+  const [mesFiltro, setMesFiltro] = useState<string>("todos");
+
+  const meses = receitaPorMes.map((m) => m.mes);
+  const dadosFiltrados = useMemo(
+    () => (mesFiltro === "todos" ? receitaPorMes : receitaPorMes.filter((m) => m.mes === mesFiltro)),
+    [mesFiltro]
+  );
+  const maxReceita = Math.max(...dadosFiltrados.map((m) => m.valor));
   const maxServico = Math.max(...servicosMargem.map((s) => s.receita));
+
+  const mesAtual = mesFiltro === "todos" ? receitaPorMes[receitaPorMes.length - 1] : dadosFiltrados[0];
+  const idxAtual = receitaPorMes.findIndex((m) => m.mes === mesAtual.mes);
+  const mesAnterior = idxAtual > 0 ? receitaPorMes[idxAtual - 1] : null;
+  const variacao = mesAnterior
+    ? Number((((mesAtual.valor - mesAnterior.valor) / mesAnterior.valor) * 100).toFixed(1))
+    : kpis.receitaVar;
+
+  const fator = mesAtual.valor / kpis.receitaMes;
+  const servicosCalc = Math.round(kpis.servicosMes * fator);
+  const clientesCalc = Math.round(kpis.clientesAtivos * (0.85 + fator * 0.15));
 
   return (
     <div className="space-y-8">
-      <header>
-        <div className="text-sm text-muted-foreground">Bom dia, Dra. Helena</div>
-        <h1 className="text-3xl font-semibold text-foreground mt-1">Visão Executiva</h1>
-        <p className="text-muted-foreground mt-1">Resumo da sua clínica em tempo real. Tudo que importa, em linguagem simples.</p>
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <div className="text-sm text-muted-foreground">Bom dia, Dra. Helena</div>
+          <h1 className="text-3xl font-semibold text-foreground mt-1">Visão Executiva</h1>
+          <p className="text-muted-foreground mt-1">Resumo da sua clínica em tempo real. Tudo que importa, em linguagem simples.</p>
+        </div>
+        <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2">
+          <Calendar className="w-4 h-4 text-accent" />
+          <label htmlFor="mes-filtro" className="text-xs text-muted-foreground">Mês:</label>
+          <select
+            id="mes-filtro"
+            value={mesFiltro}
+            onChange={(e) => setMesFiltro(e.target.value)}
+            className="bg-transparent text-sm font-medium text-foreground focus:outline-none cursor-pointer"
+          >
+            <option value="todos">Todos os meses</option>
+            {meses.map((m) => (
+              <option key={m} value={m}>{m}</option>
+            ))}
+          </select>
+        </div>
       </header>
 
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPICard titulo="Receita do mês" valor={formatBRL(kpis.receitaMes)} variacao={kpis.receitaVar} />
-        <KPICard titulo="Clientes ativos" valor={kpis.clientesAtivos.toLocaleString("pt-BR")} variacao={kpis.clientesVar} />
-        <KPICard titulo="Ticket médio" valor={formatBRL(kpis.ticketMedio)} variacao={kpis.ticketVar} />
-        <KPICard titulo="Serviços realizados" valor={String(kpis.servicosMes)} variacao={kpis.servicosVar} sufixo="no mês" />
+        <KPICard titulo={mesFiltro === "todos" ? "Receita do mês" : `Receita de ${mesAtual.mes}`} valor={formatBRL(mesAtual.valor)} variacao={variacao} />
+        <KPICard titulo="Clientes ativos" valor={clientesCalc.toLocaleString("pt-BR")} variacao={kpis.clientesVar} />
+        <KPICard titulo="Ticket médio" valor={formatBRL(Math.round(kpis.ticketMedio * (0.9 + fator * 0.1)))} variacao={kpis.ticketVar} />
+        <KPICard titulo="Serviços realizados" valor={String(servicosCalc)} variacao={kpis.servicosVar} sufixo={mesFiltro === "todos" ? "no mês" : `em ${mesAtual.mes}`} />
       </section>
 
       <section>
@@ -81,12 +117,14 @@ function Index() {
           <div className="flex items-baseline justify-between mb-6">
             <div>
               <h3 className="font-semibold text-foreground">Receita mensal</h3>
-              <p className="text-sm text-muted-foreground">Últimos 7 meses</p>
+              <p className="text-sm text-muted-foreground">
+                {mesFiltro === "todos" ? "Últimos 7 meses" : `Mês selecionado: ${mesAtual.mes}`}
+              </p>
             </div>
-            <div className="text-2xl font-semibold text-foreground">{formatBRL(kpis.receitaMes)}</div>
+            <div className="text-2xl font-semibold text-foreground">{formatBRL(mesAtual.valor)}</div>
           </div>
           <div className="flex items-end gap-3 h-48">
-            {receitaPorMes.map((m) => (
+            {dadosFiltrados.map((m) => (
               <div key={m.mes} className="flex-1 flex flex-col items-center gap-2">
                 <div className="text-xs text-muted-foreground">{formatBRL(m.valor / 1000)}k</div>
                 <div
@@ -98,6 +136,7 @@ function Index() {
             ))}
           </div>
         </div>
+
 
         <div className="bg-primary text-primary-foreground rounded-xl p-6">
           <div className="flex items-center gap-2 mb-1">
