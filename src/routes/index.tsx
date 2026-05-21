@@ -125,7 +125,7 @@ function Index() {
           </div>
           <div className="flex items-end gap-3 h-48">
             {dadosFiltrados.map((m) => (
-              <div key={m.mes} className="flex-1 flex flex-col items-center gap-2">
+              <div key={m.mes} className="flex-1 h-full flex flex-col items-center justify-end gap-2">
                 <div className="text-xs text-muted-foreground">{formatBRL(m.valor / 1000)}k</div>
                 <div
                   className="w-full bg-accent rounded-t-md transition-all"
