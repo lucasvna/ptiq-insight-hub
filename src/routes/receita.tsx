@@ -40,11 +40,11 @@ function ReceitaPage() {
         <h3 className="font-semibold mb-6">Evolução mensal</h3>
         <div className="flex items-end gap-3 h-64">
           {receitaPorMes.map((m) => (
-            <div key={m.mes} className="flex-1 flex flex-col items-center gap-2">
+            <div key={m.mes} className="flex-1 h-full flex flex-col items-center justify-end gap-2">
               <div className="text-xs font-medium">{formatBRL(m.valor)}</div>
               <div
                 className="w-full bg-primary rounded-t-md transition-all"
-                style={{ height: `${(m.valor / max) * 100}%` }}
+                style={{ height: `${(m.valor / max) * 100}%`, minHeight: "8px" }}
               />
               <div className="text-xs text-muted-foreground">{m.mes}</div>
             </div>
